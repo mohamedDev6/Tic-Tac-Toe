@@ -4,6 +4,11 @@ const roundTitle = document.getElementById("roundTitle");
 const player1Score = document.getElementById("player1");
 const player2Score = document.getElementById("player2");
 
+const player1Label = document.getElementById("player1Label");
+const player2Label = document.getElementById("player2Label");
+
+const resetBtn = document.querySelector(".reset");
+
 let turn = "X";
 let gameOver = false;
 
@@ -13,7 +18,28 @@ let maxRounds = 3;
 let xScore = 0;
 let oScore = 0;
 
-// The main Function
+let gameMode = "pvp";
+
+// Game Mode
+function setMode(mode) {
+    gameMode = mode;
+
+    resetAll();
+
+    if (mode === "ai") {
+        mainTitle.innerHTML = "Player vs Computer";
+
+        player1Label.textContent = "Player";
+        player2Label.textContent = "Computer";
+    } else {
+        mainTitle.innerHTML = "Player vs Player";
+
+        player1Label.textContent = "Player X";
+        player2Label.textContent = "Player O";
+    }
+}
+
+// Main Game Function
 function game(id) {
     roundTitle.classList.remove("hide");
 
@@ -23,11 +49,65 @@ function game(id) {
 
     if (element.textContent !== "") return;
 
+    // Prevent clicking during computer turn
+    if (gameMode === "ai" && turn !== "X") return;
+
     element.textContent = turn;
 
+    getResultOfRound();
+
+    // AI MODE
+    if (gameMode === "ai") {
+        turn = "O";
+
+        mainTitle.innerHTML = "Computer Thinking...";
+
+        setTimeout(() => {
+            computerMove();
+        }, 500);
+    } else {
+        // PVP MODE
+        turn = turn === "X" ? "O" : "X";
+
+        mainTitle.innerHTML = `It's Player ${turn} Turn`;
+    }
+}
+
+// Computer Move
+function computerMove() {
+    if (gameOver) return;
+
+    let emptySquares = [];
+
+    for (let i = 1; i <= 9; i++) {
+        let cell = document.getElementById("item" + i);
+
+        if (cell.textContent === "") {
+            emptySquares.push(cell);
+        }
+    }
+
+    if (emptySquares.length === 0) return;
+
+    let randomIndex = Math.floor(Math.random() * emptySquares.length);
+
+    let randomCell = emptySquares[randomIndex];
+
+    randomCell.textContent = "O";
+
+    getResultOfRound();
+
+    turn = "X";
+
+    mainTitle.innerHTML = "It's Player X Turn";
+}
+
+// Check the result of round
+function getResultOfRound() {
     if (checkWin()) {
         gameOver = true;
         round++;
+
         setTimeout(resetGame, 1500);
         return;
     }
@@ -35,13 +115,12 @@ function game(id) {
     if (isDraw()) {
         gameOver = true;
         round++;
+
         mainTitle.innerHTML = "It's a Tie! 🤝";
+
         setTimeout(resetGame, 1500);
         return;
     }
-
-    turn = turn === "X" ? "O" : "X";
-    mainTitle.innerHTML = `It's Player ${turn} Turn`;
 }
 
 // Check Win
@@ -56,9 +135,11 @@ function checkWin() {
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9],
+
         [1, 4, 7],
         [2, 5, 8],
         [3, 6, 9],
+
         [1, 5, 9],
         [3, 5, 7],
     ];
@@ -66,12 +147,15 @@ function checkWin() {
     for (let [a, b, c] of winCases) {
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
             document.getElementById("item" + a).style.backgroundColor = "#08006c";
+
             document.getElementById("item" + b).style.backgroundColor = "#08006c";
+
             document.getElementById("item" + c).style.backgroundColor = "#08006c";
 
             updateScore(squares[a]);
 
-            mainTitle.innerHTML = `The Player ${squares[a]} wins this round! 🎉`;
+            mainTitle.innerHTML = `The ${squares[a]} Wins This Round! 🎉`;
+
             return true;
         }
     }
@@ -90,43 +174,7 @@ function isDraw() {
     return squares.every((cell) => cell !== "");
 }
 
-// Reset Round
-function resetGame() {
-    for (let i = 1; i <= 9; i++) {
-        let cell = document.getElementById("item" + i);
-        cell.textContent = "";
-        cell.style.backgroundColor = "#170fb3ce";
-    }
-
-    turn = "X";
-    gameOver = false;
-
-    if (round > maxRounds) {
-        endGame();
-        return;
-    }
-
-    mainTitle.innerHTML = "<span>X O</span> Game";
-    roundTitle.textContent = `Round ${round}`;
-}
-
-// End The Game
-function endGame() {
-    let finalWinner;
-
-    if (xScore > oScore) finalWinner = "Player X 🎉";
-    else if (oScore > xScore) finalWinner = "Player O 🎉";
-    else finalWinner = "No one";
-
-    mainTitle.innerHTML = `The Final Winner: ${finalWinner}`;
-    roundTitle.textContent = "Game Over";
-
-    setTimeout(() => {
-        resetAll();
-    }, 3000);
-}
-
-// Score Update
+// Update Score
 function updateScore(winner) {
     if (winner === "X") {
         xScore++;
@@ -139,12 +187,15 @@ function updateScore(winner) {
     checkFinalWinner();
 }
 
-// Check The Final Winner
+// Final Winner Check
 function checkFinalWinner() {
     if (xScore === maxRounds || oScore === maxRounds) {
+        gameOver = true;
+
         let winner = xScore === maxRounds ? "X" : "O";
 
-        mainTitle.innerHTML = `The Player ${winner} Won The Game! 🎉`;
+        mainTitle.innerHTML = `Player ${winner} Won The Game! 🎉`;
+
         roundTitle.textContent = "Game Over";
 
         setTimeout(() => {
@@ -153,9 +204,54 @@ function checkFinalWinner() {
     }
 }
 
+// Reset Round
+function resetGame() {
+    for (let i = 1; i <= 9; i++) {
+        let cell = document.getElementById("item" + i);
+
+        cell.textContent = "";
+
+        cell.style.backgroundColor = "#170fb3ce";
+    }
+
+    turn = "X";
+
+    gameOver = false;
+
+    if (round > maxRounds) {
+        endGame();
+        return;
+    }
+
+    mainTitle.innerHTML = "<span>X O</span> Game";
+    roundTitle.textContent = `Round ${round}`;
+}
+
+// End Game
+function endGame() {
+    let finalWinner;
+
+    if (xScore > oScore) {
+        finalWinner = "Player X 🎉";
+    } else if (oScore > xScore) {
+        finalWinner = "Player O 🎉";
+    } else {
+        finalWinner = "No One";
+    }
+
+    mainTitle.innerHTML = `Final Winner: ${finalWinner}`;
+
+    roundTitle.textContent = "Game Over";
+
+    setTimeout(() => {
+        resetAll();
+    }, 3000);
+}
+
 // Reset All
 function resetAll() {
     round = 1;
+
     xScore = 0;
     oScore = 0;
 
@@ -170,7 +266,6 @@ function resetAll() {
 }
 
 // Reset Button
-const resetBtn = document.querySelector(".reset");
 resetBtn.addEventListener("click", () => {
     resetAll();
 });

@@ -75,8 +75,7 @@ body {
     border: 2px solid #fff;
 }
 
-.reset {
-    width: 100%;
+button {
     background-color: #0d0a52ce;
     padding: 10px;
     border-radius: 10px;
@@ -86,8 +85,25 @@ body {
     cursor: pointer;
 }
 
-.reset:hover {
+button:hover {
     background-color: #08006c;
+}
+
+.reset {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.modes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pvp,
+.pvc {
+    width: calc((100% - 10px) / 2);
 }
 
 .hide {
