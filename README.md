@@ -19,6 +19,7 @@ Players take turns placing X and O on a 3x3 grid until a player wins or the game
 ## 🎮 Features
 
 - Two-player mode (X and O)
+- Player vs Computer mode
 - Turn-based gameplay system
 - Win detection (rows, columns, diagonals)
 - Draw detection when no moves are left
