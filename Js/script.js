@@ -154,7 +154,7 @@ function checkWin() {
 
             updateScore(squares[a]);
 
-            mainTitle.innerHTML = `The ${squares[a]} Wins This Round! 🎉`;
+            mainTitle.innerHTML = `The ${squares[a]} Won This Round!`;
 
             return true;
         }
@@ -194,7 +194,7 @@ function checkFinalWinner() {
 
         let winner = xScore === maxRounds ? "X" : "O";
 
-        mainTitle.innerHTML = `Player ${winner} Won The Game! 🎉`;
+        mainTitle.innerHTML = `Player ${winner} Won The Game!`;
 
         roundTitle.textContent = "Game Over";
 
@@ -239,7 +239,7 @@ function endGame() {
         finalWinner = "No One";
     }
 
-    mainTitle.innerHTML = `Final Winner: ${finalWinner} 🎉`;
+    mainTitle.innerHTML = `Final Winner: ${finalWinner}`;
 
     roundTitle.textContent = "Game Over";
 }
