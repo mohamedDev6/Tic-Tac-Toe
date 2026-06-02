@@ -232,20 +232,16 @@ function endGame() {
     let finalWinner;
 
     if (xScore > oScore) {
-        finalWinner = "Player X 🎉";
+        finalWinner = "Player X";
     } else if (oScore > xScore) {
-        finalWinner = "Player O 🎉";
+        finalWinner = "Player O";
     } else {
         finalWinner = "No One";
     }
 
-    mainTitle.innerHTML = `Final Winner: ${finalWinner}`;
+    mainTitle.innerHTML = `Final Winner: ${finalWinner} 🎉`;
 
     roundTitle.textContent = "Game Over";
-
-    setTimeout(() => {
-        resetAll();
-    }, 3000);
 }
 
 // Reset All
